@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 
 import income from '../../assets/income.svg';
 import outcome from '../../assets/outcome.svg';
@@ -9,6 +9,7 @@ import api from '../../services/api';
 import Header from '../../components/Header';
 
 import formatValue from '../../utils/formatValue';
+import formatDate from '../../utils/formatDate';
 
 import { Container, CardContainer, Card, TableContainer } from './styles';
 
@@ -37,7 +38,16 @@ const Dashboard: React.FC = () => {
     async function loadTransactions(): Promise<void> {
       const response = await api.get("transactions");
 
-      setTransactions([...transactions, response.data.transactions]);
+      response.data.transactions.map((item:Transaction)=>{
+
+        item.formattedValue =
+        (item.type === "outcome" ?"- ":"")
+        + formatValue(item.value);
+
+        item.formattedDate =  formatDate(new Date(item.created_at));
+      });
+
+      setTransactions(response.data.transactions);
       setBalance(response.data.balance as Balance);
     }
 
@@ -85,18 +95,22 @@ const Dashboard: React.FC = () => {
             </thead>
 
             <tbody>
-              <tr>
-                <td className="title">Computer</td>
-                <td className="income">R$ 5.000,00</td>
-                <td>Sell</td>
-                <td>20/04/2020</td>
-              </tr>
-              <tr>
-                <td className="title">Website Hosting</td>
-                <td className="outcome">- R$ 1.000,00</td>
-                <td>Hosting</td>
-                <td>19/04/2020</td>
-              </tr>
+              {transactions.map((
+                {id,
+                type,
+                title,
+                category,
+                formattedDate,
+                formattedValue})=>(
+
+                <tr key={id}>
+                  <td className="title">{title}</td>
+                  <td className={type}>{formattedValue}</td>
+                  <td>{category.title}</td>
+                  <td>{formattedDate}</td>
+                </tr>
+
+              ))}
             </tbody>
           </table>
         </TableContainer>
