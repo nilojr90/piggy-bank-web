@@ -12,6 +12,7 @@ import formatValue from '../../utils/formatValue';
 import formatDate from '../../utils/formatDate';
 
 import { Container, CardContainer, Card, TableContainer } from './styles';
+import TransactionList from '../../components/TransactionList';
 
 interface Transaction {
   id: string;
@@ -84,35 +85,7 @@ const Dashboard: React.FC = () => {
         </CardContainer>
 
         <TableContainer>
-          <table>
-            <thead>
-              <tr>
-                <th>Título</th>
-                <th>Preço</th>
-                <th>Categoria</th>
-                <th>Data</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {transactions.map((
-                {id,
-                type,
-                title,
-                category,
-                formattedDate,
-                formattedValue})=>(
-
-                <tr key={id}>
-                  <td className="title">{title}</td>
-                  <td className={type}>{formattedValue}</td>
-                  <td>{category.title}</td>
-                  <td>{formattedDate}</td>
-                </tr>
-
-              ))}
-            </tbody>
-          </table>
+          <TransactionList list={transactions}/>
         </TableContainer>
       </Container>
     </>
